@@ -8,7 +8,9 @@ class SpatialEngine {
         this.cube = null;
         this.time = 0;
         this.stats = { fps: 0, triangles: 0, lights: 0 };
-        this.cameraDistance = 5; // Distance préservée
+        this.cameraDistance = 5;
+        this.rotationX = 0;
+        this.rotationY = 0;
         
         this.init();
         this.setupLighting();
@@ -89,7 +91,6 @@ class SpatialEngine {
     setupControls() {
         let mouseDown = false;
         let mouseX = 0, mouseY = 0;
-        let rotationX = 0, rotationY = 0;
 
         this.renderer.domElement.addEventListener('mousedown', (e) => {
             mouseDown = true;
@@ -107,16 +108,14 @@ class SpatialEngine {
             const dx = e.clientX - mouseX;
             const dy = e.clientY - mouseY;
 
-            rotationY += dx * 0.01;
-            rotationX -= dy * 0.01;
+            this.rotationY += dx * 0.01;
+            this.rotationX -= dy * 0.01;
 
-            // Limitation rotation verticale
-            rotationX = Math.max(-Math.PI/2 + 0.1, Math.min(Math.PI/2 - 0.1, rotationX));
+            this.rotationX = Math.max(-Math.PI/2 + 0.1, Math.min(Math.PI/2 - 0.1, this.rotationX));
 
-            // Mise à jour position caméra en préservant la distance
-            this.camera.position.x = this.cameraDistance * Math.cos(rotationX) * Math.cos(rotationY);
-            this.camera.position.y = this.cameraDistance * Math.sin(rotationX);
-            this.camera.position.z = this.cameraDistance * Math.cos(rotationX) * Math.sin(rotationY);
+            this.camera.position.x = this.cameraDistance * Math.cos(this.rotationX) * Math.cos(this.rotationY);
+            this.camera.position.y = this.cameraDistance * Math.sin(this.rotationX);
+            this.camera.position.z = this.cameraDistance * Math.cos(this.rotationX) * Math.sin(this.rotationY);
             this.camera.lookAt(0, 0, 0);
 
             mouseX = e.clientX;
@@ -125,16 +124,14 @@ class SpatialEngine {
 
         // Zoom avec molette (met à jour cameraDistance)
         this.renderer.domElement.addEventListener('wheel', (e) => {
+            e.preventDefault();
             const zoomSpeed = 0.3;
             const delta = e.deltaY > 0 ? zoomSpeed : -zoomSpeed;
             
             this.cameraDistance += delta;
             this.cameraDistance = Math.max(1, Math.min(15, this.cameraDistance));
             
-            // Appliquer le nouveau zoom
-            this.camera.position.x = this.cameraDistance * Math.cos(rotationX) * Math.cos(rotationY);
-            this.camera.position.y = this.cameraDistance * Math.sin(rotationX);
-            this.camera.position.z = this.cameraDistance * Math.cos(rotationX) * Math.sin(rotationY);
+            this.camera.position.normalize().multiplyScalar(this.cameraDistance);
         });
     }
 
