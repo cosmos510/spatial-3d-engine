@@ -1,0 +1,14 @@
+{
+  "name": "spatial-3d-engine",
+  "version": "1.0.0",
+  "description": "Moteur 3D avec éclairage dynamique - Version Web",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "build": "echo 'Version web prête'",
+    "deploy": "echo 'Déploiement sur GitHub Pages ou Vercel'"
+  },
+  "keywords": ["3d", "webgl", "threejs", "spatial", "lighting"],
+  "author": "Spatial Intelligence Team",
+  "license": "MIT"
+}
